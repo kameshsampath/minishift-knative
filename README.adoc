@@ -2,11 +2,6 @@
 
 This repository holds the scripts to perform the CI of minishift + Knative 
 
-NOTE: Instructions are still work in progress
+IMPORTANT: Works only for OpenShift version 3.11 and above
 
-== Running tests locally
-
-[source,bash]
-----
-make clean && make test
-----
+The scripts in this repository are used to run the automated CI jobs on minishift repository to ensure Knative installs on minishift are in good shape and consistent.  These test also help to validate the Knative setup docs in upstream.

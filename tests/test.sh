@@ -2,11 +2,11 @@
 
 BINARY=build/bin/minishift
 OPENSHIFT_VERSION="v3.11.0"
-EXTRA_FLAGS="--skip-startup-checks"
+EXTRA_FLAGS=" "
 ISTIO_URL='https://storage.googleapis.com/knative-releases/serving/latest/istio.yaml'
 ISTIO_LATEST_URL='https://storage.googleapis.com/knative-releases/serving/latest/istio.yaml'
 KNATIVE_SERVING_LATEST_URL='https://storage.googleapis.com/knative-releases/serving/latest/release-no-mon.yaml'
-OC_VERSION="oc v3.11.0-alpha.0+0cbc58b-1286"
+OC_VERSION="v3.11.0+0cbc58b"
 
 function print_success_message() {
   echo ""
@@ -114,15 +114,17 @@ function verify_sample_app(){
               - name: TARGET # The environment variable printed out by the sample app
                 value: "Go Sample v1"
   ' | oc create -f -
-  while oc get pods -n myproject | grep -v -E "(Running)"; do sleep 5; done
+  sleep 5;
+  while oc get pods -n myproject | grep -v -E "(Running|STATUS)"; do sleep 5; done
+  sleep 10;
   IP_ADDRESS=$(minishift ip):$(oc get svc knative-ingressgateway -n istio-system -o 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
-  output=`curl -I -s -H "Host: helloworld-go.myproject.example.com" http://$IP_ADDRESS`
-  assert_equal "$output" "HTTP/1.1 200 OK"
+  output=`curl -I -s -H "Host: helloworld-go.myproject.example.com" http://$IP_ADDRESS | awk 'NR==1{print $2}'`
+  assert_equal "$output" "200"
   print_success_message "Application deployed successfully"
 }
 
 function verify_oc(){
-  output=`oc version | sed -n 1p`
+  output=`oc version | awk 'NR==1{print $2}'`
   assert_equal "$output" "$OC_VERSION"
   print_success_message "openshift-cli version ${OC_VERSION} installed and configured correctly"
 }
