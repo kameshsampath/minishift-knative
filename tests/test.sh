@@ -116,7 +116,9 @@ function verify_sample_app(){
   ' | oc create -f -
   while oc get pods -n myproject | grep -v -E "(Running)"; do sleep 5; done
   IP_ADDRESS=$(minishift ip):$(oc get svc knative-ingressgateway -n istio-system -o 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
-  curl -H "Host: helloworld-go.myproject.example.com" http://$IP_ADDRESS
+  output=`curl -I -s -H "Host: helloworld-go.myproject.example.com" http://$IP_ADDRESS`
+  assert_equal "$output" "HTTP/1.1 200 OK"
+  print_success_message "Application deployed successfully"
 }
 
 function verify_oc(){
@@ -169,16 +171,17 @@ function verify_delete() {
 
 # Tests
 verify_start_instance
-# sleep 90
+
+sleep 90
 
 eval $($BINARY docker-env) && eval $($BINARY oc-env)
 oc login -u admin -p admin 
 
 # oc binary test
-#verify_oc
+verify_oc
 
 # Istio Install test 
-#verify_istio_install
+verify_istio_install
 
 # Admission Controller Check
 verify_admission_webhooks

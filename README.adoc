@@ -4,7 +4,6 @@ This repository holds the scripts to perform the CI of minishift + Knative
 
 NOTE: Instructions are still work in progress
 
-
 == Running tests locally
 
 [source,bash]
