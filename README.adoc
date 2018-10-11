@@ -1,0 +1,7 @@
+= Knative setup on Minishift
+
+This repository holds the scripts to perform the CI of minishift + Knative 
+
+IMPORTANT: Works only for OpenShift version 3.11 and above
+
+The scripts in this repository are used to run the automated CI jobs on minishift repository to ensure Knative installs on minishift are in good shape and consistent.  These test also help to validate the Knative setup docs in upstream.
